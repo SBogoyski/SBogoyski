@@ -1,0 +1,153 @@
+﻿@model AllMealsViewModel
+
+@{
+    this.ViewData["Title"] = "All Meals";
+}
+
+@if (Model.Meals.Count() == 0)
+{
+    <partial name="_NoMealsPartial" />
+}
+else
+{
+    <table class="table table-sm text-center table-bordered shadow">
+        <thead>
+            <tr class="text-white" style="background-color: peru">
+                <th scope="col">Meal / Foods</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Protein / Target</th>
+                <th scope="col">Carbs / Target</th>
+                <th scope="col">Fat / Target</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meal in @Model.Meals)
+            {
+                <tr>
+                    <td></td>
+                </tr>
+                <tr class="text-white" style="background-color: maroon">
+                    <th>
+                        @meal.Name
+                    </th>
+                    <th>
+                        @meal.TotalCalories.ToString("F2") kcal
+                    </th>
+                    <th>
+                        @meal.CurrentProtein.ToString("F2") gr. / @meal.TargetProtein.ToString("F2") gr.
+                    </th>
+                    <th>
+                        @meal.CurrentCarbohydrates.ToString("F2") gr. / @meal.TargetCarbs.ToString("F2") gr.
+                    </th>
+                    <th>
+                        @meal.CurrentFats.ToString("F2") gr. / @meal.TargetFat.ToString("F2") gr.
+                    </th>
+                    <th>
+                        <a class="btn btn-danger" asp-action="Delete" asp-controller="Meals" asp-route-mealId="@meal.Id">
+                            <strong>Delete</strong>
+                        </a>
+                    </th>
+                </tr>
+                @foreach (var mealFood in meal.MealFoods)
+                {
+                    <tr style="background-color: aliceblue;">
+                        <th>
+                            @mealFood.FoodName - @mealFood.QuantityInGrams.ToString("F2") grams.
+                        </th>
+                        <th>
+                            @mealFood.Calories.ToString("F2")
+                        </th>
+                        <th>
+                            @mealFood.Protein.ToString("F2")
+                        </th>
+                        <th>
+                            @mealFood.Carbohydrates.ToString("F2")
+                        </th>
+                        <th>
+                            @mealFood.Fats.ToString("F2")
+                        </th>
+                        <th>
+                            <a asp-action="RemoveFood" asp-controller="MealsFoods" asp-route-mealFoodId="@mealFood.Id">
+                                <i class="far fa-trash-alt text-danger"></i>
+                            </a>
+                        </th>
+                    </tr>
+                }
+            }
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+        <tfoot class="bg-light">
+            <tr class="text-white" style="background-color: peru">
+                <th scope="col">Stats</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Protein</th>
+                <th scope="col">Carbs</th>
+                <th scope="col">Fat</th>
+                <th scope="col"></th>
+            </tr>
+            <tr>
+                <th>
+                    Totals:
+                </th>
+                <th>
+                    @Model.TotalCalories.ToString("F2") kcal
+                </th>
+                <th>
+                    @Model.TotalProtein.ToString("F2") gr.
+                </th>
+                <th>
+                    @Model.TotalCarbohydrates.ToString("F2") gr.
+                </th>
+                <th>
+                    @Model.TotalFats.ToString("F2") gr.
+                </th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    Your Daily Goal:
+                </th>
+                <th>
+                    @Model.UserNutrients.DailyCaloriesGoal.ToString("F2") kcal
+                </th>
+                <th>
+                    @Model.UserNutrients.DailyProteinGoal.ToString("F2") gr.
+                </th>
+                <th>
+                    @Model.UserNutrients.DailyCarbohydratesGoal.ToString("F2") gr.
+                </th>
+                <th>
+                    @Model.UserNutrients.DailyFatGoal.ToString("F2") gr.
+                </th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    Remaining:
+                </th>
+                <th>
+                    @((Model.UserNutrients.DailyCaloriesGoal - Model.TotalCalories).ToString("F2")) kcal
+                </th>
+                <th>
+                    @((Model.UserNutrients.DailyProteinGoal - Model.TotalProtein).ToString("F2")) gr.
+                </th>
+                <th>
+                    @((Model.UserNutrients.DailyCarbohydratesGoal - Model.TotalCarbohydrates).ToString("F2")) gr.
+                </th>
+                <th>
+                    @((Model.UserNutrients.DailyFatGoal - Model.TotalFats).ToString("F2")) gr.
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="text-center">
+        <a class="btn btn-outline-info" asp-area="" asp-controller="Foods" asp-action="All">Add food</a>
+    </div>
+    <div class="text-center" style="margin-top: 1%">
+        <a class="btn btn-outline-primary" asp-area="" asp-controller="Meals" asp-action="Create">Create new meal</a>
+    </div>
+}

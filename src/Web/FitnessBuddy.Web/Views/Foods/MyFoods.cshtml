@@ -1,0 +1,63 @@
+﻿@using FitnessBuddy.Web.Infrastructure.Extensions
+@model AllFoodsViewModel
+
+@{
+    this.ViewData["Title"] = "My foods";
+}
+
+<h1 class="text-center">
+    My foods
+</h1>
+
+<partial name="_SearchFoodPartial" model="@("MyFoods")" />
+
+@if (Model.Foods.Any() == false)
+{
+    @if (string.IsNullOrWhiteSpace(@Model.Search))
+    {
+        <div class="text-center">
+            <h4>
+                You don't have any added food!
+            </h4>
+            <a class="btn btn-group-sm btn-primary" asp-action="Add" asp-controller="Foods">Add</a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h4>
+                Does not match any results!
+            </h4>
+        </div>
+    }
+}
+else
+{
+    <partial name="_FoodsPagingPartial" model="@Model" />
+    <hr />
+    <div class="container">
+        <div class="row">
+            @foreach (var food in @Model.Foods)
+            {
+                <div class="card col-md-3 mt-3">
+                    <partial name="_FoodPartial" model="food">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-center">
+                                <a class="btn btn-info" asp-action="Edit" asp-controller="Foods" asp-route-id="@food.Id">
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger" asp-action="Delete" asp-controller="Foods" asp-route-pageNumber="@Model.PageNumber" asp-route-foodId="@food.Id">
+                                    Delete
+                                </a>
+                            </li>
+                        </ul>
+                </div>
+            }
+        </div>
+    </div>
+    <hr />
+    <partial name="_FoodsPagingPartial" model="@Model" />
+}
+
+
+

@@ -1,0 +1,93 @@
+﻿@using FitnessBuddy.Web.ViewModels.Trainings
+@model AllTrainingsViewModel
+
+@{
+    this.ViewData["Title"] = "My trainings";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 border shadow bg-light rounded">
+            <div class="text-center row">
+                <ul style="list-style-type: none;">
+                    <li>
+                        <h4>Workouts:</h4>
+                    </li>
+                    @foreach (var training in Model.Trainings)
+                    {
+                        <li>
+                            <div class="row">
+                                <a asp-action="MyTrainings" asp-controller="Trainings" asp-route-trainingName="@training.Name"><h5>@training.Name</h5></a>
+                                <a class="offset-1" asp-action="Delete" asp-controller="Trainings" asp-route-id="@training.Id"><i class="fas fa-trash-alt text-danger"></i></a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <hr />
+            <div class="text-center">
+                <a class="btn btn-info text-white" asp-area="" asp-controller="Exercises" asp-action="All">Add exercise</a>
+            </div>
+            <hr />
+            <div class="text-center">
+                <h6>
+                    Create new trainig
+                </h6>
+                <form asp-action="AddTraining" asp-controller="Trainings">
+                    <div class="form-group">
+                        <input asp-for="TrainingName" value="@string.Empty" class="form-control" placeholder="Training name..." />
+                        <span asp-validation-for="TrainingName" class="text-danger"></span>
+                    </div>
+                    <div class="form-grup" style="margin-top: 2%;">
+                        <input type="submit" class="btn btn-warning" value="Create" />
+                    </div>
+                </form>
+            </div>
+            <hr />
+        </div>
+
+        <div class="col-md-9 bg-light">
+            <h4 class="text-center shadow border" style="font-style: oblique;">
+                <strong>@Model.TrainingName</strong>
+            </h4>
+            <hr />
+            @if (Model.TrainingExercises.Any() == false)
+            {
+                <h2 class="text-center">
+                    No exercises!
+                </h2>
+            }
+
+            <div class="row">
+                @foreach (var exercise in Model.TrainingExercises)
+                {
+                    <div class="col-lg-4">
+                        <div class="card mt-2 shadow rouded">
+                            <div class="card-top text-center">
+                                <h5 class="card-title">@exercise.ExerciseName</h5>
+                                <img class="card-img img-thumbnail" style="height: 180px;" src="@exercise.ExerciseImageUrl" alt="Card image cap">
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-light"><strong>Sets:</strong> @exercise.Sets</li>
+                                <li class="list-group-item bg-light"><strong>Repetitions:</strong> @exercise.Repetitions</li>
+                                <li class="list-group-item bg-light"><strong>Weight:</strong> @exercise.Weight</li>
+                                <li class="list-group-item text-center alert bg-light">
+                                    <a asp-action="AddToTraining" asp-controller="Exercises" asp-route-exerciseId="@exercise.ExerciseId">
+                                        <p class="text-white btn btn-sm btn-info font-weight-bold">Details</p>
+                                    </a>
+                                    <a asp-action="RemoveExercise" asp-controller="Trainings" asp-route-trainingExerciseId="@exercise.TrainingExerciseId" asp-route-name="@Model.TrainingName">
+                                        <p class="text-white btn btn-sm btn-danger font-weight-bold">Remove</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

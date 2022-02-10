@@ -1,0 +1,70 @@
+﻿@using FitnessBuddy.Web.Infrastructure.Extensions
+@model AllFoodsViewModel
+@inject FitnessBuddy.Services.Data.Users.IUsersService userService
+
+@{
+    this.ViewData["Title"] = "All foods";
+}
+
+<h1 class="text-center">
+    All foods
+</h1>
+
+<partial name="_SearchFoodPartial" model="@("All")" />
+
+@if (Model.Foods.Any() == false)
+{
+    @if (string.IsNullOrWhiteSpace(@Model.Search))
+    {
+        <div class="text-center">
+            <h4>
+                There is no added food!
+            </h4>
+            <a class="btn btn-group-sm btn-primary" asp-action="Add" asp-controller="Foods">Add</a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h4>
+                Does not match any results!
+            </h4>
+        </div>
+    }
+}
+else
+{
+    <partial name="_FoodsPagingPartial" model="@Model" />
+    <hr />
+    <div class="container">
+        <div class="row">
+            @foreach (var food in @Model.Foods)
+            {
+                <div class="card col-md-3 mt-3">
+                    <partial name="_FoodPartial" model="food" />
+                    <ul class="list-group list-group-flush">
+                        @if (this.User.Identity.IsAuthenticated)
+                        {
+                            @if (this.userService.IsFoodFavorite(this.User.GetUserId(), food.Id) == false)
+                            {
+                                <li class="list-group-item text-center">
+                                    <a asp-action="AddToFavorite" asp-controller="Foods" asp-route-foodId="@food.Id" asp-route-pageNumber="@Model.PageNumber" class="btn btn-success text-center">
+                                        Add to favorite
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="list-group-item text-center">
+                                    <strong>The Food is already added.</strong>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+    <hr />
+    <partial name="_FoodsPagingPartial" model="@Model" />
+}
